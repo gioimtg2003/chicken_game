@@ -4,9 +4,10 @@ from components.TextView import TextView
 from components.Button import Button
 from components.Icon import Icon
 from screen.SignUpScreen import SignUpScreen
+from screen.IntroScreen import IntroScreen
 import json
 import requests
-
+from SingletonClass import State
 class LoginScreen():
     
     def __init__(self, screen, width, height, stop):
@@ -38,13 +39,15 @@ class LoginScreen():
             self.screen.blit(SignUpIcon.surf, SignUpIcon.surf_rect)
             
             for event in pygame.event.get():
-                BtnLogin.onClick(event, lambda : self.onLogin(InputUser.getValue(), InputPassword.getValue()))  # Fix: Replaced '=' with '=='
+                loginFunc = lambda : self.handleLogin(InputUser.getValue(), InputPassword.getValue())
+                BtnLogin.onClick(event, loginFunc)  
                 InputUser.handleInput(event)
                 InputPassword.handleInput(event)
-                SignUpIcon.onClick(event, self.onSignUp)
+                SignUpIcon.onClick(event, self.onClickSignUp)
                 if event.type == pygame.QUIT:
                     self.stop()
-
+                
+                
             
             pygame.display.flip()
             self.clock.tick(60)
@@ -54,14 +57,22 @@ class LoginScreen():
     def stopScreen(self):
         self.running = False
     
-    def onSignUp(self):
+    def onClickSignUp(self):
         signUpScreen = SignUpScreen(self.screen, self.width, self.height, self.stop)
         signUpScreen.run()
         
-    def onLogin(self, user, password):
+    def handleLogin(self, user, password):
         login = self.request.post("http://localhost:3000/api/auth/login", data={"email": user, "password": password})
-        
         print(login.json())
+        if login.json()["code"] == 200:
+            # self.stopScreen()
+            introScreen = IntroScreen(self.screen, self.width, self.height, self.stop)
+            state = State()
+            state.user = login.json()
+            return introScreen.run()
+               
+            
+            
 
         
         

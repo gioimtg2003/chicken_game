@@ -44,9 +44,7 @@ class SignUpScreen():
                 SignInIcon.onClick(event, self.goBack)
                 
                 if event.type == pygame.QUIT:
-                    self.stop()
-
-            
+                    self.stop()            
             pygame.display.flip()
             self.clock.tick(60)
             

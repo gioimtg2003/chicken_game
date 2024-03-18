@@ -5,7 +5,7 @@ import json
 from components.InputText import InputText
 from components.TextView import TextView
 from screen.loginScreen import LoginScreen
-
+from screen.IntroScreen import IntroScreen
 with open('setting.json') as f:
     data = json.load(f)
 
@@ -33,14 +33,17 @@ class MainScreen():
         self.start = False
         self.exit = pygame.image.load(r'data\images\exit.png')
         self.exit_rect = self.exit.get_rect(x=SCREEN_WIDTH-90, y=10)
-        self.sound = mixer.Sound(r'data\\audio\\LolSound.mp3')
+        mixer.music.load(r'data\\audio\\LolSound.mp3')
+        mixer.music.play(-1)
         
     def run(self):
         loginScreen = LoginScreen(SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT, stop=self.stop)
-        self.sound.play(-1)
+        introScreen = IntroScreen(SCREEN, SCREEN_WIDTH, SCREEN_HEIGHT, self.stop)
+            
         while self.running:
-            if not loginScreen.run():
-                SCREEN.fill(BACKGROUND)
+            introScreen.run()
+            # if not loginScreen.run():
+            #     SCREEN.fill(BACKGROUND)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
